@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8">
+  <title>Pareto-Optimal Defensive Strategies Against JavaScript Injections</title>
+
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mapael/2.2.0/js/jquery.mapael.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mapael/2.2.0/js/maps/world_countries.js" charset="utf-8"></script>
+    <script src="scripts/world_countries_miller.js" charset="utf-8"></script>
+    <script src="scripts/descriptions.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="styles/stylesheet.css">
+  </head>
+
+  <script>
+    const sliders = ["HTTPSInclusions", "UpgradeRequestsHTTPS", "RedirectionToHTTPS", "HSTS", "DNSSEC", "DANE", "CertificateTransparency"];
+    const default_cost = [1000, 1100, 1200, 1300, 1400, 1500, 1600];
+
+    function checkAllSliders(check) {
+      for (let slider of sliders) {
+        document.getElementById(slider).checked = check;
+        updateSlider(slider, false);
+      }
+    }
+    function selectAll() {
+      checkAllSliders(true);
+    }
+    function unselectAll() {
+      checkAllSliders(false);
+    }
+
+    function updateSlider(sliderID, update) {
+      let slider = document.getElementById(sliderID);
+      let costInput = document.getElementById(sliderID + "Cost");
+      if (slider.checked) {
+        costInput.disabled = false;
+      } else {
+        costInput.disabled = true;
+      }
+      if(update) {
+        updateTable();
+      }
+    }
+    function initializeSlidersAndCosts () {
+      checkAllSliders(false);
+      for (let i in sliders) {
+        document.getElementById(sliders[i] + "Cost").placeholder = default_cost[i];
+        document.getElementById(sliders[i] + "Cost").value = default_cost[i];
+      }
+      registerFileUploadListener();
+    }
+
+    function setCostsByJSON(dict) {
+      for (let slider of sliders) {
+        let val = dict[slider];
+        document.getElementById(slider + "Cost").value = val;
+      }
+    }
+
+    function getCostsToJSON() {
+      let dict = {};
+      for (let slider of sliders) {
+        let val = document.getElementById(slider + "Cost").value;
+        dict[slider] = val;
+      }
+      return dict;
+    }
+
+    function uploadConfigFile(text) {
+      text = JSON.parse(text);
+      setCostsByJSON(text);
+    }
+
+    function downloadConfigFile() {
+      let dict = JSON.stringify(getCostsToJSON());
+      download("config", dict);
+    }
+
+    function download(filename, text) {
+      let element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+
+      element.style.display = 'none';
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
+    }
+
+    function registerFileUploadListener() {
+      document.querySelector("#file-input").addEventListener('change', function() {
+        // files that user has chosen
+        let all_files = this.files;
+        if(all_files.length == 0) {
+          alert('Error : No file selected');
+          return;
+        }
+
+        // first file selected by user
+        let file = all_files[0];
+
+        // file validation is successfull
+        // we will now read the file
+
+        let reader = new FileReader();
+
+        // file reading started
+        reader.addEventListener('loadstart', function() {
+        });
+
+        // file reading finished successfully
+        reader.addEventListener('load', function(e) {
+          let text = e.target.result;
+          uploadConfigFile(text);
+        });
+
+        // file reading failed
+        reader.addEventListener('error', function() {
+          alert('Error : Failed to read file');
+        });
+
+        // read as text file
+        reader.readAsText(file);
+      });
+    }
+
+    function updateTable() {
+      let HTTPSInclusionsCost = document.getElementById(sliders[0] + "Cost").value;
+      let UpgradeRequestsHTTPSCost = document.getElementById(sliders[1] + "Cost").value;
+      let RedirectionToHTTPSCost = document.getElementById(sliders[2] + "Cost").value;
+      let HSTSCost = document.getElementById(sliders[3] + "Cost").value;
+      let DNSSECCost = document.getElementById(sliders[4] + "Cost").value;
+      let DANECost = document.getElementById(sliders[5] + "Cost").value;
+      let CertificateTransparencyCost = document.getElementById(sliders[6] + "Cost").value;
+      //alert(HTTPSInclusionsCost);
+    }
+
+  </script>
+  
+  <body onload="initializeSlidersAndCosts()">
+    <div class="navbar">
+      <a href="#home">Home</a>
+    </div>
+
+
+    <label for="attacker">Attacker country or company</label>
+    <select name="attacker" class="select-wrapper arrow" id="attacker">
+      <option value="Google">Google</option>
+      <option value="Microsoft">Microsoft</option>
+      <option value="Attacker3">Attacker 3</option>
+      <option value="Attacker4">Attacker 4</option>
+    </select>
+
+    <br>
+    <br>
+    <button onclick="selectAll()" class="btn">Select all</button>
+    <button onclick="unselectAll()" class="btn">Unselect all</button>
+    <br>
+
+    <div class="smol-css-grid">
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="HTTPSInclusions" name="HTTPSInclusions" oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>HTTPS inclusions&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="HTTPSInclusionsCost" name="HTTPSInclusionsCost"
+                 oninput="updateTable()">
+      </div>
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="UpgradeRequestsHTTPS" name="UpgradeRequestsHTTPS"
+                 oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>Upgrade Requests HTTPS&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="UpgradeRequestsHTTPSCost" name="UpgradeRequestsHTTPSCost"
+                 oninput="updateTable()">
+      </div>
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="RedirectionToHTTPS" name="RedirectionToHTTPS" oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>Redirection to HTTPS&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="RedirectionToHTTPSCost" name="RedirectionToHTTPSCost"
+                 oninput="updateTable()">
+      </div>
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="HSTS" name="HSTS" oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>HSTS&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="HSTSCost" name="HSTSCost" oninput="updateTable()">
+      </div>
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="DNSSEC" name="DNSSEC" oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>DNSSEC&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="DNSSECCost" name="DNSSECCost" oninput="updateTable()">
+      </div>
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="DANE" name="DANE" oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>DANE&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="DANECost" name="DANECost" oninput="updateTable()">
+      </div>
+      <div class="sliderWrapper">
+        <label class="switch">
+          <input type="checkbox" id="CertificateTransparency" name="CertificateTransparency"
+                 oninput="updateSlider(name, true)">
+          <span class="slider round"></span>
+        </label>
+        <div>Certificate Transparency&nbsp;&nbsp;</div>
+        $ <input type="number" class="costnumber" id="CertificateTransparencyCost" name="CertificateTransparencyCost"
+                 oninput="updateTable()">
+      </div>
+    </div>
+
+    <br>
+    <button onclick="" class="btn">Download table</button>
+    <button onclick="downloadConfigFile()" class="btn">Download config</button>
+
+    <label for="file-input" id="file-input-button" class="label btn">Upload config</label>
+    <input type="file" id="file-input"  />
+
+  </body>
+</html>
