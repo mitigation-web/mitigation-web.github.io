@@ -10,13 +10,13 @@ function drawPlot(json_values) {
         var tmp_y1 = json_values["y"][i];
         var tmp = z1[i][0];
         if (tmp.length > 0) {
-            var string = tmp_x1 + "$" + "<br>" + tmp_y1 + " secured visitors" + "<br>" + components_to_pretty_nanmes[tmp[0]];
+            var string = tmp_x1 + "$" + "<br>" + tmp_y1 + "% affected visitors" + "<br>" + components_to_pretty_nanmes[tmp[0]];
             for (var j = 1; j < tmp.length; j++) {
                 string += "<br>" + components_to_pretty_nanmes[tmp[j]];
             }
             stringList.push(string);
         } else {
-            var string = tmp_x1 + "$" + "<br>" + tmp_y1 + " secured visitors";
+            var string = tmp_x1 + "$" + "<br>" + tmp_y1 + "% affected visitors";
             stringList.push(string);
         }
     }
@@ -38,12 +38,12 @@ function drawPlot(json_values) {
         paper_bgcolor: "#333333",
         xaxis: {
             color: '#fff',
-            title: 'Costs of mitigations in $'
+            title: 'costs of mitigations in $'
         },
         yaxis: {
             color: '#fff',
             //tickformat: ',.0%',
-            title: 'secured visitors'
+            title: 'affected visitors in %'
         }
 
     }
