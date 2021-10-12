@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-<title>Pareto-Optimal Defensive Strategies Against JavaScript Injections</title>
+<title>Pareto-Optimal Defensive Strategies for Securing the Web</title>
 
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" charset="utf-8"></script>
@@ -414,30 +414,30 @@
     <a href="#home">Home</a>
   </div> -->
   <div class="centered">
-    <h1>Pareto-Optimal Defensive Strategies Against JavaScript Injections</h1>
+    <h1>Pareto-Optimal Defensive Strategies for Securing the Web</h1>
     <!-- <button id="modalBtn" class="btn">Info</button> -->
   </div>
 </header>
 
 <p>
-We present the results from the paper <a>Pareto-Optimal Defensive Strategies Against JavaScript Injections</a> as an interactive web application.
+We present the results from the paper <a>Pareto-Optimal Defensive Strategies for Securing the Web</a> as an interactive web application.
 </p>
 
 <div id="myModal" class="modal">
   <!-- Modal content -->
   <div class="modal-content">
     <span class="close">&times;</span>
-    <p>This is the webapp for playing with the analysis results of <em>Pareto-Optimal Defensive Strategies Against JavaScript Injections</em>.</p>
+    <p>This is the webapp for playing with the analysis results of <em>Pareto-Optimal Defensive Strategies for Securing the Web</em>.</p>
       Workflow:
       <ol>
           <li> Select an attacker from the respective dropdown menu.</li>
           <li> Activate the mitigations you want to be considered in the analysis.</li>
           <li> The default costs are displayed next to the mitigations. You are able to edit these cost and by that potentially change the resulting optimal defensive strategy and total cost. For computing the total cost, the cost of a mitigation is multiplied with the number of domains for which it is implemented. </li>
-          <li> You can find 1) the number of affected visitors/million without additional mitigations, 2) the number of secured visitors/million after applying the mitigations, and 3) the total cost of the mitigations below.</li>
+          <li> You can find 1) the number of affected visitors in % without additional mitigations, 2) the number of secured visitors in % after applying the mitigations, and 3) the total cost of the mitigations below.</li>
       </ol>
       Additional features:
       <ul>
-          <li> You can also have a look at the frontier with all Pareto-optimal defense strategies only considering subsets of your selected mitigations and your given costs. The Pareto frontier shows the total cost, number of secured visitors/million and mitigations for every Pareto-optimal strategy.</li>
+          <li> You can also have a look at the frontier with all Pareto-optimal defense strategies only considering subsets of your selected mitigations and your given costs. The Pareto frontier shows the total cost, percentage of still affected visitors and mitigations for every Pareto-optimal strategy.</li>
           <li> You can download the resulting Pareto frontier as a JSON file.</li>
           <li> You can save your own mitigation cost assignment in a config JSON file and import an existing config file.</li>
       </ul>
@@ -608,7 +608,7 @@ are not dominated by another combinations, i.e., the other combination has
 lower cost while achieving the same or even better decrease of attack success
 or vice versa.
 The remaining combinations are plotted on a graph mapping cost to how many
-visitors they secure. Hover next to each point on the plot to find out how they
+visitors are still affected. Hover next to each point on the plot to find out how they
 combine.
 
 <p style="border: 3px solid indianred;">Due to the high relative cost of IPSec, cheaper mitigations are clustered to the left; please use the zoom tool to inspect those.</p>
